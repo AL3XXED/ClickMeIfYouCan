@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ClickMe.ViewModels"
+             x:Class="ClickMe.Views.MainPage"
+             x:DataType="vm:MainViewModel"
+             Title="MainPage">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200" />
+            <RowDefinition Height="75" />
+            <RowDefinition Height="75" />
+            <RowDefinition Height="75" />
+            <RowDefinition Height="75" />
+        </Grid.RowDefinitions>
+
+        <Image Source="titel2.png"  
+           VerticalOptions="Center"/>
+
+        <Button  
+        Text="Spiel Starten"  
+        Command="{Binding StarteSpiel}"  
+        VerticalOptions="Center"  
+        Grid.Row="1"  
+        WidthRequest="125"/>
+        <Button  
+        Text="Bestenliste"  
+        Command="{Binding ZeigeListe}"  
+        VerticalOptions="Center"  
+        Grid.Row="2"  
+        WidthRequest="125"/>
+        <Button  
+        Text="Optionen"  
+        Command="{Binding ZeigeOptionen}"  
+        VerticalOptions="Center"  
+        Grid.Row="3"  
+        WidthRequest="125"/>
+        <Button  
+        Text="Beenden"  
+        HorizontalOptions="Center"  
+        VerticalOptions="Center"  
+        Grid.Row="4"  
+        WidthRequest="125"/>
+    </Grid>
+</ContentPage>
