@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ClickMe.ViewModels"
              x:Class="ClickMe.Views.SpielPage"
-             Title="SpielPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:DataType="vm:SpielViewModel">
+
+    <ContentPage.BindingContext>
+        <vm:SpielViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,*">
+     
+        <Label Text="" Grid.Row="0" Grid.Column="0" HorizontalOptions="End" VerticalOptions="Center" FontSize="18"/>
+        <Label Text="⌛ {Binding Zeit}" Grid.Row="0" Grid.Column="0" HorizontalOptions="Start" VerticalOptions="Center" FontSize="18" Margin="30,0,0,0"/>
+
+        <Label Text="" Grid.Row="0" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" FontSize="18"/>
+        <Label Text="💎 {Binding Punkte}" Grid.Row="0" Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center" FontSize="18" Margin="30,0,0,0"/>
+
+        <AbsoluteLayout>
+            <Button 
+                ClassId="Butt"
+                Text="Click me"
+                Clicked="Button_Clicked"
+                Command="{Binding ButtonClickedCommand}"
+                WidthRequest="100"
+                HeightRequest="50"
+                TranslationX="{Binding ButtonX}"
+                TranslationY="{Binding ButtonY}"
+                CornerRadius="12"
+                FontAttributes="Bold"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                AbsoluteLayout.LayoutBounds="0,0,100,100"/>
+        </AbsoluteLayout>
+            
+    </Grid>
+
 </ContentPage>

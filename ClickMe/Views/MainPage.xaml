@@ -37,6 +37,7 @@
         WidthRequest="125"/>
         <Button  
         Text="Beenden"  
+        Command="{Binding Beenden}"
         HorizontalOptions="Center"  
         VerticalOptions="Center"  
         Grid.Row="4"  
