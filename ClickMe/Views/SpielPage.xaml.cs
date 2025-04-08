@@ -24,5 +24,9 @@ public partial class SpielPage : ContentPage
     {
         ViewModel?.ButtonClicked();
     }
-    
+
+    private void Button_Clicked_1(object sender, EventArgs e)
+    {
+
+    }
 }

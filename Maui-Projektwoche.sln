@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClickMe", "ClickMe\ClickMe.csproj", "{420B78A1-FAB1-45C5-A7B7-AE1D3138A65E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{420B78A1-FAB1-45C5-A7B7-AE1D3138A65E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{420B78A1-FAB1-45C5-A7B7-AE1D3138A65E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{420B78A1-FAB1-45C5-A7B7-AE1D3138A65E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{420B78A1-FAB1-45C5-A7B7-AE1D3138A65E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98C23A55-E940-433F-B2B6-70911091BA57}
+	EndGlobalSection
+EndGlobal

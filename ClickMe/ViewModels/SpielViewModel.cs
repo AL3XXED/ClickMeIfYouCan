@@ -17,10 +17,10 @@ public class SpielViewModel : INotifyPropertyChanged
     private double _buttonY;
     private bool _spielLauft;
 
-    private Timer _spielTimer;
-    private Timer _sprungTimer;
+    private readonly Timer _spielTimer;
+    private readonly Timer _sprungTimer;
 
-    Random random = new Random();
+    Random random = new ();
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -185,12 +185,15 @@ public class SpielViewModel : INotifyPropertyChanged
     {
         if (!_spielLauft) return;
 
-        var displayInfo = DeviceDisplay.Current.MainDisplayInfo;
-        var width = displayInfo.Width / displayInfo.Density;
-        var height = displayInfo.Height / displayInfo.Density;
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            var displayInfo = DeviceDisplay.Current.MainDisplayInfo;
+            var width = displayInfo.Width / displayInfo.Density;
+            var height = displayInfo.Height / displayInfo.Density;
 
-        ButtonX = random.Next(20, (int)(width - 120));
-        ButtonY = random.Next(20, (int)(height - 120));
+            ButtonX = random.Next(20, (int)(width - 120));
+            ButtonY = random.Next(20, (int)(height - 120));
+        });
     }
 
     public void HandleTap(Point tapPosition)

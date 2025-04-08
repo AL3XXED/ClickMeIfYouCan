@@ -9,33 +9,31 @@
         <vm:SpielViewModel />
     </ContentPage.BindingContext>
 
-    <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,*">
+    <Grid>
+        <Label x:Name="PunkteLabel"
+               Text="Punkte: 0"
+               HorizontalOptions="End"
+               VerticalOptions="Start"
+               Margin="20"
+               FontSize="24"
+               TextColor="DarkGreen"/>
 
-        <Label Text="⌛" Grid.Row="0" Grid.Column="0" HorizontalOptions="End" VerticalOptions="Center" FontSize="18"/>
-        <Label Text="{Binding Zeit}" Grid.Row="0" Grid.Column="0" HorizontalOptions="Start" VerticalOptions="Center" FontSize="18" Margin="30,0,0,0"/>
+        <Label x:Name="CountdownLabel"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               FontSize="64"
+               TextColor="Red" />
 
-        <Label Text="💎" Grid.Row="0" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" FontSize="18"/>
-        <Label Text="{Binding Punkte}" Grid.Row="0" Grid.Column="1" HorizontalOptions="Start" VerticalOptions="Center" FontSize="18" Margin="30,0,0,0"/>
-
-        <AbsoluteLayout>
-            <AbsoluteLayout.GestureRecognizers>
-                <TapGestureRecognizer Tapped="Bewegung"/>
-            </AbsoluteLayout.GestureRecognizers>
-
-            <Button 
-        Text="Click me"
-        Command="{Binding TapCommand}"
-        CommandParameter="{Binding Source={RelativeSource Self}, Path=Bounds.Location}"
-        WidthRequest="100"
-        HeightRequest="50"
-        TranslationX="{Binding ButtonX}"
-        TranslationY="{Binding ButtonY}"
-        AbsoluteLayout.LayoutBounds="0,0,AutoSize,AutoSize"
-        CornerRadius="12"
-        FontAttributes="Bold"
-        />
+        <AbsoluteLayout x:Name="Spielfeld">
+            <Ellipse x:Name="SpielForm"
+                     WidthRequest="80"
+                     HeightRequest="80"
+                     Fill="Blue">
+                <Ellipse.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnFormTapped" />
+                    <PointerGestureRecognizer PointerEntered="OnPointerNear" />
+                </Ellipse.GestureRecognizers>
+            </Ellipse>
         </AbsoluteLayout>
-
     </Grid>
-
 </ContentPage>
