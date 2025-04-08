@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ClickMe.ViewModels"
              x:Class="ClickMe.Views.SpielPage"
-             x:DataType="vm:SpielViewModel"
-             Title="Klick-Spiel">
+             x:DataType="vm:SpielViewModel">
 
     <Grid>
         <Label Text="{Binding SpielerName, StringFormat='Spieler: {0}'}"
@@ -29,23 +28,24 @@
                TextColor="Red" />
 
         <AbsoluteLayout x:Name="Spielfeld"
-                       HorizontalOptions="Fill"
-                       VerticalOptions="Fill">
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
 
             <Label x:Name="Cntdwn"
-                   Text="{Binding CountdownSeconds}"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   FontAttributes="Bold"
-                   FontSize="48"/>
+                IsVisible="{Binding CountdownVisible}"
+                Text="{Binding CountdownSeconds}"
+                AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" 
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                FontAttributes="Bold"
+                FontSize="48"/>
 
-            <Ellipse x:Name="Form"
+            <Ellipse x:Name="Form" 
                      WidthRequest="80"  
                      HeightRequest="80"  
                      Fill="Red"  
                      AbsoluteLayout.LayoutBounds="{Binding FormPosition}"
                      AbsoluteLayout.LayoutFlags="None"
-                     IsVisible="False">
+                     IsVisible="True">
                 <Ellipse.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding FormKlicktCommand}" />
                     <PointerGestureRecognizer PointerEnteredCommand="{Binding PointerNearCommand}" />
