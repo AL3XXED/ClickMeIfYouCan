@@ -1,25 +1,33 @@
-using System.Globalization;
 using ClickMe.ViewModels;
+using Microsoft.Maui.Controls;
 
 namespace ClickMe.Views;
 
 public partial class SpielPage : ContentPage
 {
-  
     public SpielPage()
     {
         InitializeComponent();
     }
 
-}
-public class XToRectConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    protected override void OnSizeAllocated(double width, double height)
     {
-        double x = (double)value;
-        double y = parameter != null ? double.Parse(parameter.ToString()) : 0;
-        return new Rect(x, y, 80, 80); 
+        base.OnSizeAllocated(width, height);
+
+        if (BindingContext is SpielViewModel vm)
+        {
+            vm.ScreenWidth = width;
+            vm.ScreenHeight = height;
+        }
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is SpielViewModel vm)
+        {
+            vm.StartNewGame();
+        }
+    }
 }

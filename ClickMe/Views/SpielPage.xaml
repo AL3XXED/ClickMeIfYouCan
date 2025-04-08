@@ -2,49 +2,55 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ClickMe.ViewModels"
-             xmlns:local="clr-namespace:ClickMe.Views"
              x:Class="ClickMe.Views.SpielPage"
-             x:DataType="vm:SpielViewModel">
-
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <x:Key="XToRectConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
-    <ContentPage.BindingContext>
-        <vm:SpielViewModel />
-    </ContentPage.BindingContext>
+             x:DataType="vm:SpielViewModel"
+             Title="Klick-Spiel">
 
     <Grid>
-        <Label x:Name="{Binding Zeit}"
-               Text="Punkte: 0"
+        <Label Text="{Binding SpielerName, StringFormat='Spieler: {0}'}"
+               HorizontalOptions="Start"
+               VerticalOptions="Start"
+               Margin="20"
+               FontSize="24"
+               TextColor="Grey"/>
+
+        <Label Text="{Binding Zeit, StringFormat='Zeit: {0}'}"
                HorizontalOptions="End"
                VerticalOptions="Start"
                Margin="20"
                FontSize="24"
-               TextColor="DarkGreen"/>
+               TextColor="Red"/>
 
-        <Label x:Name="{Binding Punkte, StringFormat='Punkte: {0}'}"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"
-               FontSize="64"
+        <Label Text="{Binding Punkte, StringFormat='Punkte: {0}'}"  
+               HorizontalOptions="Center"  
+               VerticalOptions="Start"
+               Margin="20"
+               FontSize="20"  
                TextColor="Red" />
 
-        <AbsoluteLayout x:Name="Spielfeld">
+        <AbsoluteLayout x:Name="Spielfeld"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Fill">
 
-            <Ellipse WidthRequest="80"
-                     HeightRequest="80"
-                     Fill="Red"
-                     AbsoluteLayout.LayoutBounds="{Binding FormX, Converter={StaticResource XToRectConverter}, ConverterParameter={Binding FormY}}"
-                     AbsoluteLayout.LayoutFlags="None">
+            <Label x:Name="Cntdwn"
+                   Text="{Binding CountdownSeconds}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontAttributes="Bold"
+                   FontSize="48"/>
 
+            <Ellipse x:Name="Form"
+                     WidthRequest="80"  
+                     HeightRequest="80"  
+                     Fill="Red"  
+                     AbsoluteLayout.LayoutBounds="{Binding FormPosition}"
+                     AbsoluteLayout.LayoutFlags="None"
+                     IsVisible="False">
                 <Ellipse.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="FormKlickt" />
-                    <PointerGestureRecognizer PointerEntered="PointerNear" />
+                    <TapGestureRecognizer Command="{Binding FormKlicktCommand}" />
+                    <PointerGestureRecognizer PointerEnteredCommand="{Binding PointerNearCommand}" />
                 </Ellipse.GestureRecognizers>
             </Ellipse>
-            
         </AbsoluteLayout>
     </Grid>
 </ContentPage>
