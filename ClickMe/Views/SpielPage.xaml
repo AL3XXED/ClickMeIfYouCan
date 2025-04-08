@@ -2,15 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ClickMe.ViewModels"
+             xmlns:local="clr-namespace:ClickMe.Views"
              x:Class="ClickMe.Views.SpielPage"
              x:DataType="vm:SpielViewModel">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <x:Key="XToRectConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ContentPage.BindingContext>
         <vm:SpielViewModel />
     </ContentPage.BindingContext>
 
     <Grid>
-        <Label x:Name="PunkteLabel"
+        <Label x:Name="{Binding Zeit}"
                Text="Punkte: 0"
                HorizontalOptions="End"
                VerticalOptions="Start"
@@ -18,22 +25,26 @@
                FontSize="24"
                TextColor="DarkGreen"/>
 
-        <Label x:Name="CountdownLabel"
+        <Label x:Name="{Binding Punkte, StringFormat='Punkte: {0}'}"
                HorizontalOptions="Center"
                VerticalOptions="Center"
                FontSize="64"
                TextColor="Red" />
 
         <AbsoluteLayout x:Name="Spielfeld">
-            <Ellipse x:Name="SpielForm"
-                     WidthRequest="80"
+
+            <Ellipse WidthRequest="80"
                      HeightRequest="80"
-                     Fill="Blue">
+                     Fill="Red"
+                     AbsoluteLayout.LayoutBounds="{Binding FormX, Converter={StaticResource XToRectConverter}, ConverterParameter={Binding FormY}}"
+                     AbsoluteLayout.LayoutFlags="None">
+
                 <Ellipse.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnFormTapped" />
-                    <PointerGestureRecognizer PointerEntered="OnPointerNear" />
+                    <TapGestureRecognizer Tapped="FormKlickt" />
+                    <PointerGestureRecognizer PointerEntered="PointerNear" />
                 </Ellipse.GestureRecognizers>
             </Ellipse>
+            
         </AbsoluteLayout>
     </Grid>
 </ContentPage>

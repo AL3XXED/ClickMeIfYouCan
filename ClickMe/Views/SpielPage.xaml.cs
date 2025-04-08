@@ -1,32 +1,25 @@
+using System.Globalization;
 using ClickMe.ViewModels;
 
 namespace ClickMe.Views;
 
 public partial class SpielPage : ContentPage
 {
-    private SpielViewModel? ViewModel => BindingContext as SpielViewModel;
+  
     public SpielPage()
     {
         InitializeComponent();
     }
 
-    private void Bewegung(object sender, TappedEventArgs e)
+}
+public class XToRectConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (ViewModel == null) return;
-
-        var tapPosition = e.GetPosition((View)sender);
-        if (tapPosition.HasValue)
-        {
-            ViewModel.HandleTap(new Point(tapPosition.Value.X, tapPosition.Value.Y));
-        }
-    }
-    private void Button_Clicked(object sender, EventArgs e)
-    {
-        ViewModel?.ButtonClicked();
+        double x = (double)value;
+        double y = parameter != null ? double.Parse(parameter.ToString()) : 0;
+        return new Rect(x, y, 80, 80); 
     }
 
-    private void Button_Clicked_1(object sender, EventArgs e)
-    {
-
-    }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

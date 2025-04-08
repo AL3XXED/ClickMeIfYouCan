@@ -8,35 +8,18 @@ namespace ClickMe.ViewModels;
 
 public class SpielViewModel : INotifyPropertyChanged
 {
-    private string _spielerName;
-    private int _punkte;
-    private int _spielDauer = 60;
-    private int _restlicheZeit;
-    private int _schwierigkeit = 1;
-    private double _buttonX;
-    private double _buttonY;
-    private bool _spielLauft;
-
-    private readonly Timer _spielTimer;
-    private readonly Timer _sprungTimer;
-
-    Random random = new ();
-
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    // Properties
-    public string SpielerName
-    {
-        get => _spielerName;
-        set
-        {
-            if (_spielerName != value)
-            {
-                _spielerName = value;
-                OnPropertyChanged(nameof(SpielerName));
-            }
-        }
-    }
+    public ICommand FormKlicktCommand { get; }
+    public ICommand PointerNearCommand { get; }
+
+    private  Timer _sprungTimer;
+    private readonly Random zufall = new();
+    private int _punkte;
+    private string _zeit;
+    private double _formX, _formY;
+
+    private CancellationTokenSource _cts;
 
     public int Punkte
     {
@@ -46,184 +29,113 @@ public class SpielViewModel : INotifyPropertyChanged
             if (_punkte != value)
             {
                 _punkte = value;
-                OnPropertyChanged(nameof(Punkte));
+                OnPropertyChanged();
             }
         }
     }
 
-    public int SpielDauer
+
+    public string Zeit
     {
-        get => _spielDauer;
+        get => _zeit;
         set
         {
-            if (_spielDauer != value)
+            if (_zeit != value)
             {
-                _spielDauer = value;
-                OnPropertyChanged(nameof(SpielDauer));
+                _zeit = value;
+                OnPropertyChanged();
             }
         }
     }
-
-    public int Zeit
+    public double FormX
     {
-        get => _restlicheZeit;
+        get => _formX;
         set
         {
-            if (_restlicheZeit != value)
+            if (_formX != value)
             {
-                _restlicheZeit = value;
-                OnPropertyChanged(nameof(Zeit));
+                _formX = value;
+                OnPropertyChanged();
             }
         }
     }
-
-    public int Schwierigkeit
+    public double FormY
     {
-        get => _schwierigkeit;
+        get => _formY;
         set
         {
-            if (_schwierigkeit != value)
+            if (_formY != value)
             {
-                _schwierigkeit = value;
-                OnPropertyChanged(nameof(Schwierigkeit));
+                _formY = value;
+                OnPropertyChanged();
             }
         }
     }
-
-    public double ButtonX
-    {
-        get => _buttonX;
-        set
-        {
-            if (_buttonX != value)
-            {
-                _buttonX = value;
-                OnPropertyChanged(nameof(ButtonX));
-            }
-        }
-    }
-
-    public double ButtonY
-    {
-        get => _buttonY;
-        set
-        {
-            if (_buttonY != value)
-            {
-                _buttonY = value;
-                OnPropertyChanged(nameof(ButtonY));
-            }
-        }
-    }
-
-    public ICommand ButtonClickedCommand { get; }
-    public ICommand TapCommand { get; }
 
     public SpielViewModel()
     {
-        TapCommand = new Command<Point>(HandleTap);
-        ButtonClickedCommand = new Command(ButtonClicked);
-
-        _spielTimer = new Timer(1000);
-        _spielTimer.Elapsed += (s, e) =>
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Zeit--;
-                if (Zeit <= 0)
-                    SpielEnde();
-            });
-        };
-
-        _sprungTimer = new Timer
-        {
-            AutoReset = true
-        };
-        _sprungTimer.Elapsed += (s, e) => BewegeButton();
+        FormKlicktCommand = new Command(FormKlickt);
+        PointerNearCommand = new Command(PointerNear);
+        Zeit = "5";
     }
 
-    public void ButtonClicked()
+    private async void StarteCountdown()
     {
-        if (!_spielLauft)
+        for (int i = 5; i > 0; i--)
         {
-            StartGame(SpielerName, Schwierigkeit);
+            Zeit = i.ToString();
+            await Task.Delay(1000);
         }
-        else
-        {
-            Punkte++;
-        }
+        Zeit = "";
+        StarteSpiel();
     }
-    public void StartGame(string spielerName, int schwierigkeit)
+
+    private void StarteSpiel()
     {
-        SpielerName = spielerName;
-        Schwierigkeit = schwierigkeit;
         Punkte = 0;
-        Zeit = SpielDauer;
-        _spielLauft = true;
-
-        var displayInfo = DeviceDisplay.Current.MainDisplayInfo;
-        var width = displayInfo.Width / displayInfo.Density;
-        var height = displayInfo.Height / displayInfo.Density;
-
-        ButtonX = (width - 100) / 2;
-        ButtonY = (height - 100) / 2;
-
-        _spielTimer.Start();
-
-        _sprungTimer.Interval = Schwierigkeit switch
-        {
-            1 => 1500,       
-            2 => 600,     
-            3 => 300,     
-            _ => 1000     
-        };
+        _cts = new CancellationTokenSource();
+        _sprungTimer = new Timer(1000);
+        _sprungTimer.Elapsed += (s, e) => TeleportiereForm();
         _sprungTimer.Start();
-        
+
+
     }
 
-    private void BewegeButton()
+    private void TeleportiereForm()
     {
-        if (!_spielLauft) return;
-
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            var displayInfo = DeviceDisplay.Current.MainDisplayInfo;
-            var width = displayInfo.Width / displayInfo.Density;
-            var height = displayInfo.Height / displayInfo.Density;
-
-            ButtonX = random.Next(20, (int)(width - 120));
-            ButtonY = random.Next(20, (int)(height - 120));
-        });
+        FormX = zufall.Next(0, 300);
+        FormY = zufall.Next(0, 500);
     }
 
-    public void HandleTap(Point tapPosition)
+    private async Task SpielTimer()
     {
-        if (!_spielLauft) return;
-
-        double strecke = Math.Sqrt(Math.Pow(tapPosition.X - ButtonX, 2) + Math.Pow(tapPosition.Y - ButtonY, 2));
-
-        if (strecke < 25)
+        int spielzeit = 60;
+        while (spielzeit > 0)
         {
-            BewegeButton();
+            spielzeit--;
+            await Task.Delay(1000);
         }
 
-    }
-
-    private async void SpielEnde()
-    {
-        _spielLauft = false;
-        _spielTimer.Stop();
         _sprungTimer.Stop();
+        _cts.Cancel();
 
-        await MainThread.InvokeOnMainThreadAsync(async () =>
-        {
-            await Application.Current.MainPage.DisplayAlert("Spiel beendet", $"Du hast {Punkte} Punkte erreicht!", "OK");
-            await Application.Current.MainPage.Navigation.PopAsync();
-        });
+        await Application.Current.MainPage.DisplayAlert("Spiel beendet", $"Punkte: {Punkte}", "OK");
+        Application.Current.MainPage.Navigation.PopAsync();
     }
 
+    private void FormKlickt()
+    {
+        Punkte++;
+        TeleportiereForm();
+    }
+    private void PointerNear()
+    {
+        FormX = zufall.Next(-100, 100);
+        FormY = zufall.Next(-100, 100);
+    }
 
-
-    private void OnPropertyChanged(string propertyName) =>
+    private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
