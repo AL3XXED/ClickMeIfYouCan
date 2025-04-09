@@ -2,24 +2,26 @@
 using System.Collections.ObjectModel;
 using ClickMe.ViewModels;
 using System.Diagnostics;
+using ClickMe.Models;
 
-public class BestenlisteEintrag
-{
-    public string SpielerName { get; set; }
-    public int Punkte { get; set; }
-}
+namespace ClickMe.ViewModels;
+
 public partial class BestenlisteViewModel : BaseViewModel
 {
-    private static List<BestenlisteEintrag> _bestenliste = new();
+    private const int MaxEintraege = 10;
+    private static List<Spieler> _bestenliste = new();
     private static readonly string SpeicherPfad = Path.Combine(FileSystem.AppDataDirectory, "bestenliste.json");
 
-    private ObservableCollection<BestenlisteEintrag> _bestenlisteObservable = new();
+    private ObservableCollection<Spieler> _bestenlisteObservable = new();
 
-    public ObservableCollection<BestenlisteEintrag> BestenlisteObservable
+    public ObservableCollection<Spieler> BestenlisteObservable
     {
         get => _bestenlisteObservable;
         set
         {
+            if (_bestenlisteObservable == value)
+                return;
+
             _bestenlisteObservable = value;
             OnPropertyChanged();
         }
@@ -33,24 +35,44 @@ public partial class BestenlisteViewModel : BaseViewModel
 
     public void EintragHinzufuegen(string spielerName, int punkte)
     {
-        _bestenliste.Add(new BestenlisteEintrag
-        {
-            SpielerName = spielerName,
-            Punkte = punkte
-        });
+        if (string.IsNullOrWhiteSpace(spielerName))
+            throw new ArgumentException("Spielername darf nicht leer sein.");
 
-        SpeichereBestenliste();
-        AktualisiereBestenliste();
+        if (punkte < 0)
+            throw new ArgumentException("Punkte dürfen nicht negativ sein");
+
+        var vorhandenerEintrag = _bestenliste.FirstOrDefault(e => e.SpielerName.Equals(spielerName, StringComparison.OrdinalIgnoreCase));
+
+        if (vorhandenerEintrag != null)
+        {
+            if (punkte > vorhandenerEintrag.Punktzahl)
+            {
+                vorhandenerEintrag.Punktzahl = punkte;
+                SpeichereBestenliste();
+                AktualisiereBestenliste();
+            }
+        }
+        else
+        {
+            _bestenliste.Add(new Spieler
+            {
+                SpielerName = spielerName.Trim(),
+                Punktzahl = punkte
+            });
+
+            SpeichereBestenliste();
+            AktualisiereBestenliste();
+        }
     }
 
-    private void LadeBestenliste()
+    private static void LadeBestenliste()
     {
         if (File.Exists(SpeicherPfad))
         {
             try
             {
                 string json = File.ReadAllText(SpeicherPfad);
-                var geladeneListe = JsonSerializer.Deserialize<List<BestenlisteEintrag>>(json);
+                var geladeneListe = JsonSerializer.Deserialize<List<Spieler>>(json);
                 if (geladeneListe != null)
                     _bestenliste = geladeneListe;
             }
@@ -63,13 +85,32 @@ public partial class BestenlisteViewModel : BaseViewModel
 
     private void SpeichereBestenliste()
     {
-        string json = JsonSerializer.Serialize(_bestenliste);
-        File.WriteAllText(SpeicherPfad, json);
+        try
+        {
+            _bestenliste = _bestenliste
+                .OrderByDescending(e => e.Punktzahl)
+                .Take(MaxEintraege)
+                .ToList();
+
+            string json = JsonSerializer.Serialize(_bestenliste);
+            File.WriteAllText(SpeicherPfad, json);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Fehler beim Speichern: {ex.Message}");
+        }
     }
 
     private void AktualisiereBestenliste()
     {
-        BestenlisteObservable = new ObservableCollection<BestenlisteEintrag>(
-            _bestenliste.OrderByDescending(e => e.Punkte));
+        var topEintraege = _bestenliste
+            .OrderByDescending(e => e.Punktzahl)
+            .Take(MaxEintraege)
+            .ToList();
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            BestenlisteObservable = new ObservableCollection<Spieler>(topEintraege);
+        });
     }
 }

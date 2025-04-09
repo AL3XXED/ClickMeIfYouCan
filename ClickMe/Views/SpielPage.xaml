@@ -20,7 +20,7 @@
                FontSize="24"
                TextColor="Red"/>
 
-        <Label Text="{Binding Punkte, StringFormat='Punkte: {0}'}"  
+        <Label Text="{Binding Punktzahl, StringFormat='Punkte: {0}'}"  
                HorizontalOptions="Center"  
                VerticalOptions="Start"
                Margin="20"

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
-            xmlns:vm="clr-namespace:ClickMe.ViewModels"  
-            x:Class="ClickMe.Views.Bestenliste"  
+            xmlns:vm="clr-namespace:ClickMe.ViewModels"
+            xmlns:models="clr-namespace:ClickMe.Models"
+            x:DataType="vm:BestenlisteViewModel"
+            x:Class="ClickMe.Views.Bestenliste"
+           
             Title="Bestenliste">
 
 
     <CollectionView ItemsSource="{Binding BestenlisteObservable}">
         <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <StackLayout Padding="10"  >
-                    <Label Text="{Binding SpielerName}" FontSize="18" VerticalOptions="Center" />
-                    <Label Text="{Binding Punkte}" FontSize="14" TextColor="Gray" VerticalOptions="Center" />
-                </StackLayout>
+            <DataTemplate x:DataType="models:Spieler">
+                <VerticalStackLayout Padding="10" >
+                    <Label Text="{Binding SpielerName}" FontSize="18" HorizontalTextAlignment="Center"/>
+                    <Label Text="{Binding Punktzahl}" FontSize="14" TextColor="Gray" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

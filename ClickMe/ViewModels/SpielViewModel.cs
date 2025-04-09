@@ -73,7 +73,7 @@ namespace ClickMe.ViewModels
             }
         }
 
-        public int Punkte
+        public int Punktzahl
         {
             get => _punkte;
             private set
@@ -177,7 +177,7 @@ namespace ClickMe.ViewModels
         private void StartGame()
         {
             _isGameRunning = true;
-            Punkte = 0;
+            Punktzahl = 0;
             _cts = new CancellationTokenSource();
 
             //  Zufallsrichtung für die Animation
@@ -268,7 +268,7 @@ namespace ClickMe.ViewModels
             if (!_isGameRunning)
                 return;
 
-            Punkte++;
+            Punktzahl++;
             TeleportForm();
         }
 
@@ -296,13 +296,13 @@ namespace ClickMe.ViewModels
             try
             {
                 var bestenliste = new BestenlisteViewModel();
-                bestenliste.EintragHinzufuegen(SpielerName, Punkte);
+                bestenliste.EintragHinzufuegen(SpielerName, Punktzahl);
 
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     await Application.Current.MainPage.DisplayAlert(
                         "Spiel beendet",
-                        $"{SpielerName}, du hast {Punkte} Punkte erreicht!",
+                        $"{SpielerName}, du hast {Punktzahl} Punkte erreicht!",
                         "Ok");
 
                     if (Application.Current.MainPage.Navigation.NavigationStack.Count > 1)
