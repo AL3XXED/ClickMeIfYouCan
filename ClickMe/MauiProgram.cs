@@ -22,7 +22,7 @@ namespace ClickMe
             builder.Services.AddSingleton<MainViewModel>();
             builder.Services.AddTransient<SpielPage>();
             builder.Services.AddTransient<Bestenliste>();
-            //builder.Services.AddTransient<BestenlisteViewModel>();
+            builder.Services.AddTransient<BestenlisteViewModel>();
             builder.Services.AddTransient<Optionen>();
             //builder.Services.AddTransient<OptionenViewModel>();
             builder.Services.AddTransient<Spieler>();

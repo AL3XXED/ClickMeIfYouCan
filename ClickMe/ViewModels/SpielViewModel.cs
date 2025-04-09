@@ -1,18 +1,18 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
+using ClickMe.Views;
 using Timer = System.Timers.Timer;
 
 namespace ClickMe.ViewModels
 {
-    public class SpielViewModel : INotifyPropertyChanged
+    public partial class SpielViewModel : BaseViewModel
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
         public ICommand FormKlicktCommand { get; }
         public ICommand PointerNearCommand { get; }
 
@@ -188,7 +188,7 @@ namespace ClickMe.ViewModels
             _animationTimer.Start();
 
             // Teleport-Timer
-            _sprungTimer = new Timer(800);
+            _sprungTimer = new Timer(1800);
             _sprungTimer.Elapsed += (s, e) => TeleportForm();
             _sprungTimer.AutoReset = true;
             _sprungTimer.Start();
@@ -221,7 +221,7 @@ namespace ClickMe.ViewModels
                 FormY = Math.Clamp(FormY, 0, ScreenHeight - FormGroesse);
             }
 
-            if ((DateTime.Now - _lastTeleportTime).TotalSeconds > TeleportInterval && _random.NextDouble() < 0.5)
+            if ((DateTime.Now - _lastTeleportTime).TotalSeconds > TeleportInterval && _random.NextDouble() < 0.2)
             {
                 TeleportForm();
                 _lastTeleportTime = DateTime.Now;
@@ -284,25 +284,35 @@ namespace ClickMe.ViewModels
             FormY = Math.Clamp(FormY, 0, ScreenHeight - FormGroesse);
         }
 
-        private void EndGame()
+        private async Task EndGame()
         {
             _isGameRunning = false;
             _sprungTimer?.Stop();
             _sprungTimer?.Dispose();
             _cts?.Cancel();
+
             _animationTimer.Stop();
 
-            // Endbildschirm im UI-Thread anzeigen
-            MainThread.BeginInvokeOnMainThread(async () =>
+            try
             {
-                await Application.Current.MainPage.DisplayAlert("Spiel beendet", $"Punkte: {Punkte}", "OK");
-                await Application.Current.MainPage.Navigation.PopAsync();
-            });
-        }
+                var bestenliste = new BestenlisteViewModel();
+                bestenliste.EintragHinzufuegen(SpielerName, Punkte);
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await Application.Current.MainPage.DisplayAlert(
+                        "Spiel beendet",
+                        $"{SpielerName}, du hast {Punkte} Punkte erreicht!",
+                        "Ok");
+
+                    if (Application.Current.MainPage.Navigation.NavigationStack.Count > 1)
+                        await Application.Current.MainPage.Navigation.PopAsync();
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[EndGame Exception] {ex}");
+            }
         }
     }
 }

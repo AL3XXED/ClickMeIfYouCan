@@ -42,7 +42,9 @@
             <Ellipse x:Name="Form" 
                      WidthRequest="80"  
                      HeightRequest="80"  
-                     Fill="Red"  
+                     Fill="Transparent"
+                     Stroke="Black"
+                     StrokeThickness="3"
                      AbsoluteLayout.LayoutBounds="{Binding FormPosition}"
                      AbsoluteLayout.LayoutFlags="None"
                      IsVisible="True">
