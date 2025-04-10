@@ -1,12 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
+﻿using System.Diagnostics;
 using System.Windows.Input;
-using ClickMe.Views;
 using Timer = System.Timers.Timer;
 
 namespace ClickMe.ViewModels
@@ -36,10 +29,12 @@ namespace ClickMe.ViewModels
         private double _velocityX;
         private double _velocityY;
         private DateTime _lastTeleportTime;
-        private const double TeleportInterval = 3.0;
 
         // Eigenschaften
-        public int GameDurationSeconds { get; set; } = 60;
+        public double TeleportInterval { get; set; } = 3.0;
+        public double BasisGeschwindigkeit { get; set; } = 5.0;
+        public int TeleportTimerInterval { get; set; } = 1800;
+        public int SpielZeit { get; set; } = 60;
         public int Countdown { get; set; }
         public double FensterBreite { get; set; }
         public double FensterHoehe { get; set; }
@@ -153,6 +148,15 @@ namespace ClickMe.ViewModels
 
         public void Initialize(string spielerName)
         {
+            int gespeicherteSchwierigkeit = Preferences.Get("Schwierigkeit", 1);
+
+            var optionen = new OptionenViewModel();
+
+            FormGroesse = optionen.FormGroesse;
+            TeleportInterval = optionen.TeleportInterval;
+            BasisGeschwindigkeit = optionen.BasisGeschwindigkeit;
+            TeleportTimerInterval = optionen.TeleportTimerInterval;
+
             SpielerName = spielerName;
             FormX = 100;
             FormY = 100;
@@ -172,7 +176,7 @@ namespace ClickMe.ViewModels
 
             CountdownVisible = false;
             StartGame();
-            }
+        }
 
         private void StartGame()
         {
@@ -181,17 +185,18 @@ namespace ClickMe.ViewModels
             _cts = new CancellationTokenSource();
 
             //  Zufallsrichtung für die Animation
-            _velocityX = (_random.NextDouble() - 0.5) * 10;
-            _velocityY = (_random.NextDouble() - 0.5) * 10;
+            _velocityX = (_random.NextDouble() - 0.5) * BasisGeschwindigkeit;
+            _velocityY = (_random.NextDouble() - 0.5) * BasisGeschwindigkeit;
             _lastTeleportTime = DateTime.Now;
 
             _animationTimer.Start();
 
             // Teleport-Timer
-            _sprungTimer = new Timer(1800);
+            _sprungTimer = new Timer(TeleportTimerInterval);
             _sprungTimer.Elapsed += (s, e) => TeleportForm();
             _sprungTimer.AutoReset = true;
             _sprungTimer.Start();
+
 
 
             Task.Run(() => RunGameTimer());
@@ -226,6 +231,12 @@ namespace ClickMe.ViewModels
                 TeleportForm();
                 _lastTeleportTime = DateTime.Now;
             }
+
+            if (SpielZeit > 0)
+            {
+                var image = new Image();
+                image.Rotation += 5; // Rotation der Form
+            }
         }
 
         private void TeleportForm()
@@ -247,7 +258,7 @@ namespace ClickMe.ViewModels
 
         private async Task RunGameTimer()
         {
-            int remainingTime = GameDurationSeconds;
+            int remainingTime = SpielZeit;
 
             while (remainingTime > 0 && !_cts.Token.IsCancellationRequested)
             {

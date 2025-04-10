@@ -1,12 +1,50 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ClickMe.ViewModels"
+             xmlns:local="clr-namespace:ClickMe.Converter"
+             x:DataType="vm:OptionenViewModel"
              x:Class="ClickMe.Views.Optionen"
              Title="Optionen">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:OptionenConverter x:Key="OptionenConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout Spacing="15" Padding="20">
+        <Label Text="Schwierigkeitsgrad wählen:" 
+               FontSize="Medium" 
+               HorizontalOptions="Center"/>
+
+        <RadioButton GroupName="Schwierigkeit"
+                     Content="Einsteiger"
+                     Value="1"
+                     IsChecked="{Binding Schwierigkeit, 
+                                Converter={StaticResource OptionenConverter}, 
+                                ConverterParameter='1',
+                                Mode=TwoWay}"/>
+
+        <RadioButton GroupName="Schwierigkeit"
+                     Content="Fortgeschritten"
+                     Value="2"
+                     IsChecked="{Binding Schwierigkeit, 
+                                Converter={StaticResource OptionenConverter}, 
+                                ConverterParameter='2',
+                                Mode=TwoWay}"/>
+
+        <RadioButton GroupName="Schwierigkeit"
+                     Content="Experte"
+                     Value="3"
+                     IsChecked="{Binding Schwierigkeit, 
+                                Converter={StaticResource OptionenConverter}, 
+                                ConverterParameter='3',
+                                Mode=TwoWay}"/>
+
+        <Label Text="{Binding SchwierigkeitText}"
+               FontAttributes="Bold"
+               FontSize="Large"
+               HorizontalOptions="Center"/>
     </VerticalStackLayout>
 </ContentPage>

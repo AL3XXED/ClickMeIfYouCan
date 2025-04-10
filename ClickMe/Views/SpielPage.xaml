@@ -10,14 +10,14 @@
                HorizontalOptions="Start"
                VerticalOptions="Start"
                Margin="20"
-               FontSize="24"
+               FontSize="20"
                TextColor="Grey"/>
 
         <Label Text="{Binding Zeit, StringFormat='Zeit: {0}'}"
                HorizontalOptions="End"
                VerticalOptions="Start"
                Margin="20"
-               FontSize="24"
+               FontSize="20"
                TextColor="Red"/>
 
         <Label Text="{Binding Punktzahl, StringFormat='Punkte: {0}'}"  
@@ -39,20 +39,18 @@
                 FontAttributes="Bold"
                 FontSize="48"/>
 
-            <Ellipse x:Name="Form" 
-                     WidthRequest="80"  
-                     HeightRequest="80"  
-                     Fill="Transparent"
-                     Stroke="Black"
-                     StrokeThickness="3"
+            <Image x:Name="Form" 
+                     Source="shuriken.png"
+                     WidthRequest="{Binding FormGroesse}"  
+                     HeightRequest="{Binding FormGroesse}"
                      AbsoluteLayout.LayoutBounds="{Binding FormPosition}"
                      AbsoluteLayout.LayoutFlags="None"
                      IsVisible="True">
-                <Ellipse.GestureRecognizers>
+                <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding FormKlicktCommand}" />
                     <PointerGestureRecognizer PointerEnteredCommand="{Binding PointerNearCommand}" />
-                </Ellipse.GestureRecognizers>
-            </Ellipse>
+                </Image.GestureRecognizers>
+            </Image>
         </AbsoluteLayout>
     </Grid>
 </ContentPage>

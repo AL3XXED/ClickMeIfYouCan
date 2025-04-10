@@ -15,6 +15,7 @@ public partial class SpielPage : ContentPage
             _playerName = value;
             if (BindingContext is SpielViewModel vm)
             {
+                var optionen = new OptionenViewModel(); 
                 vm.Initialize(_playerName);
             }
         }

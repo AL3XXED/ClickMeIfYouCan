@@ -108,6 +108,11 @@ public partial class BestenlisteViewModel : BaseViewModel
             .Take(MaxEintraege)
             .ToList();
 
+        for (int i = 0; i < topEintraege.Count; i++)
+        {
+            topEintraege[i].Position = i + 1; // Position beginnt bei 1
+        }
+
         MainThread.BeginInvokeOnMainThread(() =>
         {
             BestenlisteObservable = new ObservableCollection<Spieler>(topEintraege);
