@@ -1,13 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using Microsoft.Maui.Controls;
 
 namespace ClickMe.ViewModels;
 
+public class ImageOption : INotifyPropertyChanged
+{
+    public string Name { get; set; }
+    public string ImagePath { get; set; } 
+    public ImageSource Image => ImageSource.FromFile(ImagePath);
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
+
 public partial class OptionenViewModel : BaseViewModel
 {
+    public ObservableCollection<ImageOption> AvailableImages { get; } = new();
+
+    private ImageOption _selectedImage;
+    public ImageOption SelectedImage
+    {
+        get => _selectedImage;
+        set
+        {
+            if (_selectedImage != value)
+            {
+                _selectedImage = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(AvailableImages)); 
+                Preferences.Set("SelectedImageName", value?.Name ?? string.Empty);
+            }
+        }
+    }
+
     private int _schwierigkeit;
     public int Schwierigkeit
     {
@@ -20,22 +50,7 @@ public partial class OptionenViewModel : BaseViewModel
                 Preferences.Set("Schwierigkeit", value);
                 EinstellungenAnwenden();
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(SchwierigkeitText));
             }
-        }
-    }
-
-    public string SchwierigkeitText
-    {
-        get
-        {
-            return Schwierigkeit switch
-            {
-                1 => "Einsteiger",
-                2 => "Fortgeschritten",
-                3 => "Experte",
-                _ => "Unbekannt"
-            };
         }
     }
 
@@ -46,8 +61,43 @@ public partial class OptionenViewModel : BaseViewModel
 
     public OptionenViewModel()
     {
-        Schwierigkeit = Preferences.Get("Schwierigkeit", 1);
+        LoadAvailableImages();
+        LoadSavedPreferences();
         EinstellungenAnwenden();
+    }
+
+    private void LoadAvailableImages()
+    {
+        try
+        {
+            AvailableImages.Clear();
+
+            
+            AvailableImages.Add(new ImageOption { Name = "Shuriken", ImagePath = "shuriken.png" });
+            AvailableImages.Add(new ImageOption { Name = "Knife", ImagePath = "knife.png" });
+            AvailableImages.Add(new ImageOption { Name = "Sharingan", ImagePath = "sharingan.png" });
+        }
+        catch (Exception)
+        {
+            AvailableImages.Add(new ImageOption { Name = "Default", ImagePath = "shuriken.png" });
+        }
+    }
+
+
+
+    private void LoadSavedPreferences()
+    {
+        Schwierigkeit = Preferences.Get("Schwierigkeit", 1);
+
+        var savedImageName = Preferences.Get("SelectedImageName", string.Empty);
+        if (!string.IsNullOrEmpty(savedImageName))
+        {
+            SelectedImage = AvailableImages.FirstOrDefault(img => img.Name == savedImageName) ?? AvailableImages.First();
+        }
+        else
+        {
+            SelectedImage = AvailableImages.First();
+        }
     }
 
     private void EinstellungenAnwenden()
@@ -76,12 +126,4 @@ public partial class OptionenViewModel : BaseViewModel
                 throw new ArgumentOutOfRangeException(nameof(Schwierigkeit), "Unbekannte Schwierigkeit");
         }
     }
-
-    public List<string> SchwierigkeitTextOptions => new()
-    {
-        "Einsteiger",
-        "Fortgeschritten",
-        "Experte"
-    };
 }
-

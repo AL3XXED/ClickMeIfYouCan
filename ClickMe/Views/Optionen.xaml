@@ -1,50 +1,88 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:ClickMe.ViewModels"
-             xmlns:local="clr-namespace:ClickMe.Converter"
-             x:DataType="vm:OptionenViewModel"
-             x:Class="ClickMe.Views.Optionen"
-             Title="Optionen">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
+            xmlns:vm="clr-namespace:ClickMe.ViewModels"  
+            xmlns:io="clr-namespace:ClickMe.ViewModels"  
+            xmlns:local="clr-namespace:ClickMe.Converter"  
+            x:DataType="vm:OptionenViewModel"  
+            x:Class="ClickMe.Views.Optionen"  
+            Title="Optionen">  
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <local:OptionenConverter x:Key="OptionenConverter"/>
-        </ResourceDictionary>
-    </ContentPage.Resources>
+  <ContentPage.Resources>  
+      <ResourceDictionary>  
+          <local:OptionenConverter x:Key="OptionenConverter"/>  
+      </ResourceDictionary>  
+  </ContentPage.Resources>  
 
-    <VerticalStackLayout Spacing="15" Padding="20">
-        <Label Text="Schwierigkeitsgrad wählen:" 
-               FontSize="Medium" 
-               HorizontalOptions="Center"/>
+  <Grid RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*,*" Padding="20">  
+      <Label Text="Schwierigkeitsgrad wählen:"   
+             FontSize="Medium"
+             HeightRequest="65"
+             HorizontalOptions="Center"
+             Grid.ColumnSpan="3"/>  
 
-        <RadioButton GroupName="Schwierigkeit"
-                     Content="Einsteiger"
-                     Value="1"
-                     IsChecked="{Binding Schwierigkeit, 
-                                Converter={StaticResource OptionenConverter}, 
-                                ConverterParameter='1',
-                                Mode=TwoWay}"/>
+      <VerticalStackLayout Grid.Row="1" Grid.Column="0" HorizontalOptions="Center">  
+          <RadioButton Margin="15,0,0,0" HorizontalOptions="Center"  
+                       GroupName="Schwierigkeit"  
+                       Value="1"
+                       IsChecked="{Binding Schwierigkeit,   
+                                  Converter={StaticResource OptionenConverter},   
+                                  ConverterParameter='1',  
+                                  Mode=TwoWay}"/>
 
-        <RadioButton GroupName="Schwierigkeit"
-                     Content="Fortgeschritten"
-                     Value="2"
-                     IsChecked="{Binding Schwierigkeit, 
-                                Converter={StaticResource OptionenConverter}, 
-                                ConverterParameter='2',
-                                Mode=TwoWay}"/>
+           <Label Text="Einsteiger"
+                 HorizontalOptions="Center"
+                 FontSize="Medium" />
+       </VerticalStackLayout>
+       <VerticalStackLayout Grid.Row="1" Grid.Column="1" HorizontalOptions="Center" >
 
-        <RadioButton GroupName="Schwierigkeit"
-                     Content="Experte"
-                     Value="3"
-                     IsChecked="{Binding Schwierigkeit, 
-                                Converter={StaticResource OptionenConverter}, 
-                                ConverterParameter='3',
-                                Mode=TwoWay}"/>
+       <RadioButton Margin="15,0,0,0" HorizontalOptions="Center"  
+                   GroupName="Schwierigkeit" 
+                   Value="2"  
+                   IsChecked="{Binding Schwierigkeit,   
+                              Converter={StaticResource OptionenConverter},   
+                              ConverterParameter='2',  
+                              Mode=TwoWay}"/>
 
-        <Label Text="{Binding SchwierigkeitText}"
-               FontAttributes="Bold"
-               FontSize="Large"
-               HorizontalOptions="Center"/>
-    </VerticalStackLayout>
+           <Label Text="Fortgeschritten"
+                  HorizontalOptions="Center"
+                  FontSize="Medium" />
+       </VerticalStackLayout>
+       <VerticalStackLayout Grid.Row="1" Grid.Column="2" HorizontalOptions="Center" >
+
+       <RadioButton Margin="15,0,0,0" HorizontalOptions="Center"
+                   GroupName="Schwierigkeit" 
+                   Value="3"  
+                   IsChecked="{Binding Schwierigkeit,   
+                              Converter={StaticResource OptionenConverter},   
+                              ConverterParameter='3',  
+                              Mode=TwoWay}"/>
+
+           <Label Text="Experte"
+                  HorizontalOptions="Center"
+                  FontSize="Medium" />
+       </VerticalStackLayout>
+
+
+        <Picker Grid.Row="3" 
+                  Grid.ColumnSpan="3"
+                  HorizontalOptions="Center"
+                  VerticalOptions="Start"
+                  WidthRequest="250"
+                  HeightRequest="65"
+                  Title="Bild auswählen"
+                  ItemsSource="{Binding AvailableImages}"
+                  SelectedItem="{Binding SelectedImage}"
+                  ItemDisplayBinding="{Binding Name}">
+        </Picker>
+
+
+       <Image Grid.Row="4"
+                  Grid.ColumnSpan="3"
+                  Source="{Binding SelectedImage.Image}"
+                  WidthRequest="100"
+                  HeightRequest="100"
+                  HorizontalOptions="Center"
+              VerticalOptions="Center"/>
+   </Grid>  
 </ContentPage>

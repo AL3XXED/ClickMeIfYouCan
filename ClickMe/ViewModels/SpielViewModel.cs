@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows.Input;
+using ClickMe.Views;
+using Microsoft.Maui.Controls;
 using Timer = System.Timers.Timer;
 
 namespace ClickMe.ViewModels
@@ -8,7 +10,9 @@ namespace ClickMe.ViewModels
     {
         public ICommand FormKlicktCommand { get; }
         public ICommand PointerNearCommand { get; }
+        public ICommand RotationCommand { get; }
 
+        
         // Timer für  Teleportation
         private Timer _sprungTimer;
 
@@ -26,9 +30,13 @@ namespace ClickMe.ViewModels
         private bool _countdownVisible = true;
 
         // Variablen für Bewegung
+        private double _rotation;
         private double _velocityX;
         private double _velocityY;
         private DateTime _lastTeleportTime;
+    
+
+        private OptionenViewModel _optionen = new OptionenViewModel(); // Changed to private field with explicit type
 
         // Eigenschaften
         public double TeleportInterval { get; set; } = 3.0;
@@ -39,6 +47,7 @@ namespace ClickMe.ViewModels
         public double FensterBreite { get; set; }
         public double FensterHoehe { get; set; }
         public double FormGroesse { get; set; } = 80; // Standardgröße
+        public ImageOption AktuellesBild { get; set; }
         public int CountdownSeconds
         {
             get => _countdownSeconds;
@@ -94,6 +103,19 @@ namespace ClickMe.ViewModels
             }
         }
 
+        public double Rotation
+        {
+            get => _rotation;
+            set
+            {
+                if (_rotation != value)
+                {
+                    _rotation = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public double FormX
         {
             get => _formX;
@@ -136,6 +158,9 @@ namespace ClickMe.ViewModels
 
         public Rect FormPosition => new Rect(FormX, FormY, FormGroesse, FormGroesse);
 
+     
+        public OptionenViewModel Optionen => _optionen; 
+
         public SpielViewModel(IDispatcher dispatcher)
         {
             FormKlicktCommand = new Command(FormKlickt);
@@ -144,6 +169,9 @@ namespace ClickMe.ViewModels
             _animationTimer = dispatcher.CreateTimer();
             _animationTimer.Interval = TimeSpan.FromMilliseconds(16); // ca. 60 FPS
             _animationTimer.Tick += AnimationsTick;
+
+          
+            AktuellesBild = _optionen.SelectedImage;
         }
 
         public void Initialize(string spielerName)
@@ -211,6 +239,7 @@ namespace ClickMe.ViewModels
             // Neue Position
             FormX += _velocityX;
             FormY += _velocityY;
+            Rotation += 8; 
 
             // Überprüfe Kollision mit den Rändern (X-Achse)
             if (FormX <= 0 || FormX >= ScreenWidth - FormGroesse)
@@ -230,12 +259,6 @@ namespace ClickMe.ViewModels
             {
                 TeleportForm();
                 _lastTeleportTime = DateTime.Now;
-            }
-
-            if (SpielZeit > 0)
-            {
-                var image = new Image();
-                image.Rotation += 5; // Rotation der Form
             }
         }
 
@@ -294,6 +317,8 @@ namespace ClickMe.ViewModels
             FormX = Math.Clamp(FormX, 0, ScreenWidth - FormGroesse);
             FormY = Math.Clamp(FormY, 0, ScreenHeight - FormGroesse);
         }
+
+
 
         private async Task EndGame()
         {

@@ -40,7 +40,8 @@
                 FontSize="48"/>
 
             <Image x:Name="Form" 
-                     Source="shuriken.png"
+                     Source="{Binding AktuellesBild.Image}"
+                     Rotation="{Binding Rotation}"
                      WidthRequest="{Binding FormGroesse}"  
                      HeightRequest="{Binding FormGroesse}"
                      AbsoluteLayout.LayoutBounds="{Binding FormPosition}"

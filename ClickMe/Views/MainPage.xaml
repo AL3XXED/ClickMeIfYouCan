@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ClickMe.ViewModels"
              x:Class="ClickMe.Views.MainPage"
-             x:DataType="vm:MainViewModel"
-             Title="MainPage">
+             x:DataType="vm:MainViewModel">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="200" />
